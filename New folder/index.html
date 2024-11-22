@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('https://scx2.b-cdn.net/gfx/news/hires/2018/1-whytheweathe.jpg');
+            background-size: cover;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            margin: 10px;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 800px;
+        }
+        #predict-btn {
+            margin-top: 20px;
+        }
+        .pet-tip {
+            font-size: 0.9em;
+            font-style: italic;
+            color: #FFD700;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Real-Time Weather Data & Pet Tips</h1>
+        <div id="weather-data" class="d-flex flex-wrap justify-content-center"></div>
+        
+        <button id="predict-btn" class="btn btn-primary" onclick="location.href='predict.html'">Predict Weather</button>
+    </div>
+
+    <script>
+        const readAPIKey = '19X3UPFCM0T8BIAM';
+        const channelID = '2725755';
+
+        function fetchWeatherData() {
+            fetch(`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPIKey}&results=1`)
+                .then(response => response.json())
+                .then(data => {
+                    const feeds = data.feeds[0];
+                    const temperature = feeds.field1 || 'N/A';
+                    const humidity = feeds.field2 || 'N/A';
+                    const ldrValue = feeds.field3 || 'N/A';
+                    const rainValue = feeds.field4 || 'N/A';
+                    const windSpeed = feeds.field5 || 'N/A';
+
+                    const petTipTemperature = temperature > 30 ? "It's hot! Ensure pets have access to cool, fresh water and shade." :
+                        temperature < 10 ? "It's chilly! Keep pets warm indoors or with cozy bedding." : 
+                        "Perfect temperature for outdoor play with pets!";
+                    const petTipRain = rainValue == 1 ? "It's rainy! Keep pets indoors or dry them off after outdoor play." : "No rain! Great for walks.";
+                    const petTipWind = windSpeed > 15 ? "Windy! Secure outdoor items and avoid areas with falling branches." : "Calm winds, safe for outdoor play.";
+
+                    document.getElementById('weather-data').innerHTML = `
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Temperature</h5>
+                                    <p>${temperature} °C</p>
+                                    <p class="pet-tip">${petTipTemperature}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Humidity</h5>
+                                    <p>${humidity} %</p>
+                                    <p class="pet-tip">Humidity levels are comfortable for most pets.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>LDR Value</h5>
+                                    <p>${ldrValue}</p>
+                                    <p class="pet-tip">Monitor lighting; low visibility can affect pets' activity levels.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Rain Status</h5>
+                                    <p>${rainValue == 1 ? 'Rain Detected' : 'No Rain'}</p>
+                                    <p class="pet-tip">${petTipRain}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Wind Speed</h5>
+                                    <p>${windSpeed} km/h</p>
+                                    <p class="pet-tip">${petTipWind}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        setInterval(fetchWeatherData, 60000);
+        fetchWeatherData();
+    </script>
+</body>
+</html>

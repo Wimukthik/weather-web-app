@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('https://scx2.b-cdn.net/gfx/news/hires/2018/1-whytheweathe.jpg');
+            background-size: cover;
+            color: white;
+        }
+        .card {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        #predict-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Real-Time Weather Data</h1>
+        <div id="weather-data" class="row"></div>
+        
+        <button id="predict-btn" class="btn btn-primary" onclick="location.href='predict.html'">Predict Weather</button>
+    </div>
+
+    <script>
+        const readAPIKey = '19X3UPFCM0T8BIAM';
+        const channelID = '2725755';
+
+        function fetchWeatherData() {
+            fetch(`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPIKey}&results=1`)
+                .then(response => response.json())
+                .then(data => {
+                    const feeds = data.feeds[0];
+                    const temperature = feeds.field1 || 'N/A';
+                    const humidity = feeds.field2 || 'N/A';
+                    const ldrValue = feeds.field3 || 'N/A';
+                    const rainValue = feeds.field4 || 'N/A';
+                    const windSpeed = feeds.field5 || 'N/A';
+
+                    document.getElementById('weather-data').innerHTML = `
+                        <div class="col-md-4"><div class="card"><div class="card-body"><h5>Temperature</h5><p>${temperature} °C</p></div></div></div>
+                        <div class="col-md-4"><div class="card"><div class="card-body"><h5>Humidity</h5><p>${humidity} %</p></div></div></div>
+                        <div class="col-md-4"><div class="card"><div class="card-body"><h5>LDR Value</h5><p>${ldrValue}</p></div></div></div>
+                        <div class="col-md-4"><div class="card"><div class="card-body"><h5>Rain Status</h5><p>${rainValue == 1 ? 'Rain Detected' : 'No Rain'}</p></div></div></div>
+                        <div class="col-md-4"><div class="card"><div class="card-body"><h5>Wind Speed</h5><p>${windSpeed} km/h</p></div></div></div>
+                    `;
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        setInterval(fetchWeatherData, 60000);
+        fetchWeatherData();
+    </script>
+</body>
+</html>

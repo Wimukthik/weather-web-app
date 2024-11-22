@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Prediction</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('https://www.publicdomainpictures.net/pictures/620000/nahled/uber-den-wolken-himmel-1718927356ODT.jpg'); /* Update the path to image */
+            background-size: cover; /* Ensures the image covers the whole background */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            height: 100vh; /* Ensure body takes full height of viewport */
+            margin: 0; /* Remove default margin */
+            display: flex; /* Use flexbox for centering */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            color: white; /* Change text color for better contrast */
+        }
+        .container {
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
+            padding: 20px;
+            border-radius: 10px; /* Rounded corners */
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Prediction</h1>
+        <input type="date" id="prediction-date" class="form-control mb-4" />
+        <button class="btn btn-success" onclick="predictWeather()">Predict</button>
+        <div id="prediction-result" class="mt-5"></div>
+    </div>
+
+    <script>
+        function predictWeather() {
+            const selectedDate = document.getElementById('prediction-date').value;
+            if (!selectedDate) {
+                alert('Please select a date for prediction.');
+                return;
+            }
+            // Implement prediction function logic here or call an API
+            document.getElementById('prediction-result').innerHTML = `Weather prediction for ${selectedDate} coming soon!`;
+        }
+    </script>
+</body>
+</html>
